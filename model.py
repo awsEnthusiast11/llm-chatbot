@@ -1,5 +1,7 @@
 # Load model directly
-
+from dotenv import load_dotenv
+import os
+load_dotenv()
 # Load model directly
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from transformers import logging as hf_logging
@@ -10,8 +12,8 @@ device = "cuda:0" if torch.cuda.is_available() else "cpu"
 # Clear cache
 torch.cuda.empty_cache()
 hf_logging.set_verbosity_info()
-access_token = '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'
-HfFolder.save_token(access_token)
+token = os.environ['access_token']
+HfFolder.save_token(token)
 
 tokenizer = AutoTokenizer.from_pretrained("Writer/palmyra-small")
 model = AutoModelForCausalLM.from_pretrained("Writer/palmyra-small").to(device)

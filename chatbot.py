@@ -1,7 +1,7 @@
 # bot.py
 
 from chatterbot import ChatBot
-
+import model
 chatbot = ChatBot("Chatpot")
 
 exit_conditions = (":q", "quit", "exit")
@@ -11,4 +11,5 @@ while True:
         break
     else:
         print(f"🪴 {chatbot.get_response(query)}")
+        print(model.chat(query))
 

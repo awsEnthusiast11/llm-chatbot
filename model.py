@@ -25,7 +25,7 @@ local_model_path = "./local_model"
 model = AutoModelForCausalLM.from_pretrained(local_model_path).to(device)
 tokenizer = AutoTokenizer.from_pretrained(local_model_path)
 def chat(text):
-    input_ids = tokenizer.encode("What is LLM?", return_tensors="pt").cuda()
+    input_ids = tokenizer.encode(text, return_tensors="pt").cuda()
     print(input_ids)
     print(input_ids.shape)
     output = model.generate(
@@ -34,9 +34,9 @@ def chat(text):
         max_new_tokens=100
     )
     # Decode and print generated text
-    for i, sample_output in enumerate(output):
-        print("{}: {}".format(i + 1, tokenizer.decode(sample_output, skip_special_tokens=True)))
-
+    # for i, sample_output in enumerate(output):
+    #     print("{}: {}".format(i + 1, tokenizer.decode(sample_output, skip_special_tokens=True)))
+    return tokenizer.decode(output[0], skip_special_tokens=True)
 def print_gpu_memory():
     print("GPU memory allocated:", torch.cuda.memory_allocated())
     print("GPU memory cached:", torch.cuda.memory_reserved())

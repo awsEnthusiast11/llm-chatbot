@@ -2,3 +2,4 @@ local_model/
 .idea/
 *.env
 myenv/
+.ipynb_checkpoints/

@@ -10,6 +10,5 @@ while True:
     if query in exit_conditions:
         break
     else:
-        print(f"🪴 {chatbot.get_response(query)}")
         print(model.chat(query))
 

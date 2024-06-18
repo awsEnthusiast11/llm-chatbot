@@ -1,0 +1,60 @@
+name: Deploy Chatbot
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Package Greeting Function
+        run: |
+          zip -r greeting_function.zip greeting_function.py
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-session-name: GitHubActions
+      - name: Deploy Greeting Function
+        run: |
+          aws lambda update-function-code --function-name GreetingFunction --zip-file fileb://greeting_function.zip
+
+      - name: Package Question Function
+        run: |
+          zip -r question_function.zip question_function.py
+
+      - name: Deploy Question Function
+        run: |
+          aws lambda update-function-code --function-name QuestionFunction --zip-file fileb://question_function.zip
+
+      - name: Package Farewell Function
+        run: |
+          zip -r farewell_function.zip farewell_function.py
+
+      - name: Deploy Farewell Function
+        run: |
+          aws lambda update-function-code --function-name FarewellFunction --zip-file fileb://farewell_function.zip
+
+      - name: Deploy State Machine
+        run: |
+          aws stepfunctions update-state-machine \
+            --state-machine-arn arn:aws:states:${{ secrets.AWS_REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:stateMachine:ChatbotStateMachine \
+            --definition file://state_machine_definition.json
